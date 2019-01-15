@@ -47,3 +47,35 @@ server.get('/api/zoos/:id', (req, res) => {
     })
     .catch(err => res.status(400).json(err));
 });
+
+// post zoo
+server.post('/api/zoos', (req, res) => {
+  const {name} = req.body;
+  if (!name) {
+    res.status(400).json({error: 'the zoo must contain a name'});
+  } else {
+    db('zoos')
+      .insert(req.body)
+      .then(id => {
+        res.status(201).send(id);
+      })
+      .catch(err => {
+        res.status(500).json(err);
+      });
+  }
+});
+
+// delete zoo
+server.delete('/api/zoos/:id', (req, res) => {
+  const {id} = req.params;
+  db('zoos')
+    .where({id: id})
+    .del()
+    .then(count => {
+      if (!count) {
+        res.status(400).json({error: 'there is no zoo with that id'});
+      } else {
+        res.status(200).json({message: 'the zoo has been deleted'});
+      }
+    });
+});

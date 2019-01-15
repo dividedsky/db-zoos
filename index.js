@@ -79,3 +79,22 @@ server.delete('/api/zoos/:id', (req, res) => {
       }
     });
 });
+
+// update zoo
+server.put('/api/zoos/:id', (req, res) => {
+  const changes = req.body;
+  console.log(changes);
+  console.log(req.params.id);
+
+  db('zoos')
+    .where({id: req.params.id})
+    .update(changes)
+    .then(count => {
+      if (!count) {
+        res.status(400).json({error: 'there is no zoo with that id'});
+      } else {
+        res.status(200).json({message: 'the zoo has been updated'});
+      }
+    })
+    .catch(err => res.status(500).json({error: `there was an error: ${err}`}));
+});
